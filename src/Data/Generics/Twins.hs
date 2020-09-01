@@ -222,7 +222,7 @@ gzipWithM f x y = case gmapAccumM perkid funs y of
 
 
 -- | Twin map for queries
-gzipWithQ :: GenericQ (GenericQ r) -> GenericQ (GenericQ [r])
+gzipWithQ :: forall r. (forall a b . (Data a, Data b) => a -> b -> r) -> (forall a b . (Data a, Data b) => a -> b -> [r])
 gzipWithQ f x y = case gmapAccumQ perkid funs y of
                    ([], r) -> r
                    _       -> error "gzipWithQ"
@@ -258,7 +258,7 @@ couples of immediate subterms from the two given input terms.)
 
 geq x0 y0 = geq' x0 y0
   where
-    geq' :: GenericQ (GenericQ Bool)
+    geq' :: forall a b . (Data a, Data b) => (a -> b -> Bool)
     geq' x y =     (toConstr x == toConstr y)
                 && and (gzipWithQ geq' x y)
 
